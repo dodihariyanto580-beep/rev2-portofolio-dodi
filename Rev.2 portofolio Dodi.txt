@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dodi Hariyanto - Supply Chain & Logistics Professional Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617; /* slate-950 */
+            color: #94a3b8; /* slate-400 */
+        }
+        #hero-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            display: block;
+        }
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+        .animated-card {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .animated-card.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #0f172a; /* slate-900 */
+            border: 4px solid #06b6d4; /* cyan-500 */
+            z-index: 1;
+        }
+        .timeline-line {
+            position: absolute;
+            left: -21px;
+            top: 4px;
+            bottom: 0;
+            width: 2px;
+            background-color: #1e293b; /* slate-800 */
+        }
+        .glass-effect {
+            background: rgba(15, 23, 42, 0.6); /* slate-900 with opacity */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(30, 41, 59, 0.5); /* slate-800 with opacity */
+        }
+        .chart-container {
+            position: relative;
+            height: 250px;
+        }
+        .icon-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .org-chart-node {
+            display: inline-block;
+            background-color: #334155;
+            color: #cbd5e1;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            text-align: center;
+            border: 1px solid #475569;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .org-chart-node:hover {
+            transform: scale(1.05);
+        }
+        .org-chart-line {
+            height: 2rem;
+            width: 2px;
+            background-color: #475569;
+            margin: 0 auto;
+            animation: fadeIn 1s ease-in;
+        }
+        .org-chart-line-horizontal {
+            width: 100%;
+            height: 2px;
+            background-color: #475569;
+            animation: fadeIn 1.5s ease-in;
+        }
+        .org-chart-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .org-chart-row {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            padding-top: 1rem;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* NEW CSS for Manufacturing, Logistics, Warehousing and ML Animations */
+        .simulation-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .simulation-container {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        .simulation-box {
+            position: relative;
+            height: 250px;
+            background-color: rgba(15, 23, 42, 0.7);
+            border-radius: 12px;
+            border: 2px solid #06b6d4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            overflow: hidden;
+        }
+        .sim-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --- Logistics Animation (simplified for efficiency) --- */
+        @keyframes moveRightLeft {
+            0% { left: -10%; transform: rotateY(0deg); }
+            49% { left: 110%; transform: rotateY(0deg); }
+            50% { left: 110%; transform: rotateY(180deg); }
+            99% { left: -10%; transform: rotateY(180deg); }
+            100% { left: -10%; transform: rotateY(0deg); }
+        }
+        .transport-icon {
+            position: absolute;
+            font-size: 2.5rem;
+            animation-duration: 20s;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+        }
+        .truck-anim { bottom: 20px; animation-name: moveRightLeft; }
+        .ship-anim { bottom: 50px; animation-name: moveRightLeft; animation-duration: 25s; }
+        .plane-anim { top: 20px; animation-name: moveRightLeft; animation-duration: 18s; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header Section -->
+    <header class="bg-slate-950/80 backdrop-blur-sm fixed top-0 left-0 right-0 z-50 border-b border-slate-800">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-white">Dodi Hariyanto</a>
+            <nav class="hidden md:flex space-x-6">
+                <a href="#about" class="text-slate-300 hover:text-cyan-400 transition-colors">About</a>
+                <a href="#achievements" class="text-slate-300 hover:text-cyan-400 transition-colors">Achievements</a>
+                <a href="#competencies" class="text-slate-300 hover:text-cyan-400 transition-colors">Core Competencies</a>
+                <a href="#projects" class="text-slate-300 hover:text-cyan-400 transition-colors">Projects</a>
+                <a href="#experience" class="text-slate-300 hover:text-cyan-400 transition-colors">Experience</a>
+                <a href="#simulation" class="text-slate-300 hover:text-cyan-400 transition-colors">Project Simulation</a>
+                <a href="#education" class="text-slate-300 hover:text-cyan-400 transition-colors">Education</a>
+                <a href="#certs" class="text-slate-300 hover:text-cyan-400 transition-colors">Certifications</a>
+                <a href="#publications" class="text-slate-300 hover:text-cyan-400 transition-colors">Publications</a>
+                <a href="#org-structure" class="text-slate-300 hover:text-cyan-400 transition-colors">Org Structure</a>
+                <a href="#ask-dodi" class="text-slate-300 hover:text-cyan-400 transition-colors">Ask Dodi</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="content-wrapper">
+        <!-- Hero Section -->
+        <section id="hero" class="relative min-h-screen flex items-center justify-center text-center overflow-hidden">
+            <canvas id="hero-canvas"></canvas>
+            <div class="container mx-auto px-6 z-10">
+                <img src="https://storage.googleapis.com/taldio-uploads/taldio/talent_answer/8c92d8f0-ae2f-436c-aa2b-ca43dcad4078.png" alt="Profile Picture of Dodi Hariyanto" class="w-40 h-40 rounded-full mx-auto mb-6 border-4 border-cyan-500/50 shadow-2xl shadow-cyan-500/20">
+                <h1 class="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-4">Dodi Hariyanto</h1>
+                <p class="text-xl md:text-2xl text-cyan-400 mb-8 font-medium">Logistics & Supply Chain Professional</p>
+                <div class="flex justify-center space-x-6">
+                    <a href="https://www.linkedin.com/in/dodi-120251196/" target="_blank" class="text-slate-300 hover:text-cyan-400 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                    </a>
+                    <a href="mailto:dodihariyanto580@gmail.com" class="text-slate-300 hover:text-cyan-400 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-24 bg-slate-900">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">About Me</h2>
+                <p class="max-w-3xl mx-auto text-lg">
+                    A senior logistics and supply chain leader with over 15 years of experience optimizing global operations across the energy, medical device, manufacturing, and engineering industries. I have successfully delivered up to 15% cost reduction, enhanced delivery accuracy to 98%, and led digital integration projects that improved warehouse efficiency by 30%. With deep expertise in procurement strategy, bonded zone compliance, and supply chain innovation, I specialize in aligning digital transformation with strategic business goals. My mission is to drive sustainable efficiency, resilience, and innovation in complex global supply chains.
+                </p>
+            </div>
+        </section>
+
+        <!-- Key Achievements Section -->
+        <section id="achievements" class="py-24">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">Key Achievements</h2>
+                    <p class="text-lg mt-4">Proven results in cost reduction, compliance, and strategic development.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="animated-card glass-effect p-6 rounded-lg">
+                        <h3 class="text-xl font-bold text-cyan-400 mb-2">SEZ Tax Exemption</h3>
+                        <p>Secured a critical IT Inventory Permit for a Special Economic Zone (SEZ), achieving full tax exemption on imported goods.</p>
+                    </div>
+                     <div class="animated-card glass-effect p-6 rounded-lg">
+                        <h3 class="text-xl font-bold text-cyan-400 mb-2">20%+ Cost Reduction</h3>
+                        <p>Led a strategic import project for lithium batteries, successfully reducing project expenses by over 20% through regulatory optimization.</p>
+                    </div>
+                     <div class="animated-card glass-effect p-6 rounded-lg">
+                        <h3 class="text-xl font-bold text-cyan-400 mb-2">APAC Logistics Hub</h3>
+                        <p>Architected and established a fully functional SEZ logistics hub to manage regional distribution across the Asia-Pacific.</p>
+                    </div>
+                     <div class="animated-card glass-effect p-6 rounded-lg">
+                        <h3 class="text-xl font-bold text-cyan-400 mb-2">100% Compliance</h3>
+                        <p>Consistently maintained a perfect compliance record with complex SEZ regulations, including BC2.5-BC4.0, INSW, and CEISA.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Core Competencies Section -->
+        <section id="competencies" class="py-24 bg-slate-900">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">Core Competencies</h2>
+                    <p class="text-lg mt-4 max-w-3xl mx-auto">Expertise that drives strategic decisions and operational excellence.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="animated-card glass-effect p-6 rounded-lg text-center">
+                        <h3 class="text-xl font-bold text-cyan-400 mb-2">COGM & COGS Analysis</h3>
+                        <p>Skilled in analyzing Costs of Goods Manufactured (COGM) and Costs of Goods Sold (COGS) to identify and implement cost-saving opportunities and improve profitability.</p>
+                    </div>
+                    <div class="animated-card glass-effect p-6 rounded-lg text-center">
+                        <h3 class="text-xl font-bold text-cyan-400 mb-2">Budgeting & Financial Planning</h3>
+                        <p>Experienced in developing and managing departmental and project budgets to ensure financial targets are met and resources are allocated efficiently.</p>
+                    </div>
+                    <div class="animated-card glass-effect p-6 rounded-lg text-center">
+                        <h3 class="text-xl font-bold text-cyan-400 mb-2">Forecasting & Demand Planning</h3>
+                        <p>Adept at using historical data and market trends to create accurate forecasts, ensuring optimal inventory levels and preventing stockouts or overstocking.</p>
+                    </div>
+                    <div class="animated-card glass-effect p-6 rounded-lg text-center">
+                        <h3 class="text-xl font-bold text-cyan-400 mb-2">Customer Service Excellence</h3>
+                        <p>Dedicated to delivering exceptional service by managing customer expectations, resolving issues efficiently, and building long-term relationships through reliable logistics solutions.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Supply Chain Projects Section -->
+        <section id="projects" class="py-24">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">Supply Chain Projects</h2>
+                    <p class="text-lg mt-4 max-w-3xl mx-auto">Here's a look at my strategic initiatives in cost optimization and operational efficiency.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                     <!-- New Project: Global Supply Chain Project -->
+                     <div class="animated-card glass-effect p-8 rounded-lg">
+                        <h3 class="text-2xl font-bold text-cyan-400 mb-4">Global Supply Chain & Local Sourcing Project</h3>
+                        <p class="mb-4">
+                             Spearheaded a global project to establish a new product manufacturing line in Indonesia. Developed a strategic plan for raw material procurement, focusing on local sourcing to reduce costs. Managed the inventory of finished goods at the APAC logistics hub for distribution to Asia and Europe.
+                        </p>
+                        <div class="chart-container">
+                             <canvas id="globalSourcingChart"></canvas>
+                        </div>
+                        <p class="text-sm mt-4 text-center">
+                             Breakdown of raw material sourcing, demonstrating the shift towards more cost-effective local suppliers.
+                        </p>
+                     </div>
+
+                     <!-- Project 1: Cost Reduction Project -->
+                     <div class="animated-card glass-effect p-8 rounded-lg">
+                        <h3 class="text-2xl font-bold text-cyan-400 mb-4">Cost Reduction Project</h3>
+                        <p class="mb-4">
+                             Implemented a comprehensive cost reduction program targeting procurement, logistics, and warehousing.
+                        </p>
+                        <div class="chart-container">
+                             <canvas id="costReductionChart"></canvas>
+                        </div>
+                        <p class="text-sm mt-4 text-center">
+                             Comparison of total supply chain costs before and after project implementation. Achieved a significant reduction by optimizing vendor contracts and process flows.
+                        </p>
+                     </div>
+
+                     <!-- Project 2: New Product Development & Supplier Sourcing -->
+                     <div class="animated-card glass-effect p-8 rounded-lg">
+                        <h3 class="text-2xl font-bold text-cyan-400 mb-4">New Product & Supplier Development</h3>
+                        <p class="mb-4">
+                             Developed a new product introduction process that streamlined supplier onboarding, significantly increasing the availability of raw material suppliers.
+                        </p>
+                        <div class="chart-container">
+                             <canvas id="supplierCountChart"></canvas>
+                        </div>
+                        <p class="text-sm mt-4 text-center">
+                             The number of new suppliers successfully onboarded over a 6-month period, demonstrating an an expanded supplier base.
+                        </p>
+                     </div>
+
+                     <!-- Project 3: Combined Transport Cost Reduction -->
+                     <div class="animated-card glass-effect p-8 rounded-lg">
+                        <h3 class="text-2xl font-bold text-cyan-400 mb-4">Combined Transport Cost Reduction</h3>
+                        <p class="mb-4">
+                             Pioneered a combined transport method for shipments, leveraging sea-air or multi-modal routes to reduce overall freight costs while maintaining delivery timelines.
+                        </p>
+                        <div class="chart-container">
+                             <canvas id="shippingCostChart"></canvas>
+                        </div>
+                        <p class="text-sm mt-4 text-center">
+                             Breakdown of transportation cost savings achieved through the implementation of a new combined transport strategy.
+                        </p>
+                         <!-- Animated Logistic Icon -->
+                         <div class="icon-container mt-4">
+                             <span class="transport-icon truck-anim">🚚</span>
+                             <span class="transport-icon ship-anim">🚢</span>
+                             <span class="transport-icon plane-anim">✈️</span>
+                         </div>
+                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Work Experience Section -->
+        <section id="experience" class="py-24 bg-slate-900">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">Work Experience</h2>
+                    <p class="text-lg mt-4">A journey of growth and impact across diverse industries.</p>
+                </div>
+                <div class="relative max-w-3xl mx-auto pl-8">
+                    <div class="timeline-line"></div>
+                    <div class="space-y-12">
+                        <!-- Newest Experience -->
+                        <div class="animated-card timeline-item relative">
+                            <p class="text-cyan-400 font-semibold">2024 - Jul 2025</p>
+                            <h3 class="text-xl font-bold text-white mt-1">Operations & Supply Chain Manager</h3>
+                            <p class="text-slate-300 font-medium">PT Beurer Indonesia Technology <span class="text-xs bg-cyan-900 text-cyan-300 py-1 px-2 rounded-full ml-2">Medical Devices</span></p>
+                            <p class="mt-2">Developed SEZ logistics strategies for an APAC distribution center, managing licensing, customs, procurement, and regional stock readiness. Successfully led a cost reduction project that optimized procurement and reduced overall expenditures by 15% through strategic negotiation and process improvements.</p>
+                        </div>
+                        <!-- Experience Item -->
+                        <div class="animated-card timeline-item relative">
+                            <p class="text-cyan-400 font-semibold">2023 - 2024</p>
+                            <h3 class="text-xl font-bold text-white mt-1">Logistic Manager</h3>
+                            <p class="text-slate-300 font-medium">PT LBM Energi Baru Indonesia <span class="text-xs bg-cyan-900 text-cyan-300 py-1 px-2 rounded-full ml-2">Energy</span></p>
+                            <p class="mt-2">Led end-to-end SEZ logistics, managing customs, inventory, and 3PLs while optimizing raw material supply for production. Implemented a new supplier development program, onboarding 10+ new, high-quality suppliers within 6 months to ensure material availability and reduce lead times.</p>
+                        </div>
+                         <!-- Experience Item -->
+                        <div class="animated-card timeline-item relative">
+                            <p class="text-cyan-400 font-semibold">Jul 2022 - May 2023</p>
+                            <h3 class="text-xl font-bold text-white mt-1">Logistic Manager and Supply Chain- Contract Project</h3>
+                            <p class="text-slate-300 font-medium">PT Solid Energi Internasional, Jakarta</p>
+                            <p class="mt-2">Directed end-to-end supply chain planning, procurement, inventory, and warehouse management. Oversaw logistics operations, quality control, and financial planning, including cost-saving and budgeting initiatives. Ensured compliance with international trade regulations and managed full export-import documentation. Led purchasing, vendor management, and regional supply alignment.</p>
+                        </div>
+                        <!-- Experience Item -->
+                        <div class="animated-card timeline-item relative">
+                            <p class="text-cyan-400 font-semibold">Nov 2021 - Jun 2022</p>
+                            <h3 class="text-xl font-bold text-white mt-1">Logistic Supervisor - Contract Project</h3>
+                            <p class="text-slate-300 font-medium">PT Taka Turbomachinery Indonesia, Bandung</p>
+                            <p class="mt-2">Managed export-import and domestic shipments, and led end-to-end warehouse operations, including receiving, storage, inventory control, and outbound delivery. Ensured stock accuracy, on-time dispatch, and space optimization. Coordinated closely with production and customer service to align with sales and production plans. Oversaw daily logistics execution and ensured operational efficiency, safety, and compliance.</p>
+                        </div>
+                         <!-- Voith Experience (Updated to be more detailed) -->
+                        <div class="animated-card timeline-item relative">
+                            <p class="text-cyan-400 font-semibold">Dec 2018 - Aug 2021</p>
+                            <h3 class="text-xl font-bold text-white mt-1">Logistic Supervisor</h3>
+                            <p class="text-slate-300 font-medium">PT Voith Paper Rolls Indonesia, Karawang <span class="text-xs bg-cyan-900 text-cyan-300 py-1 px-2 rounded-full ml-2">Engineering</span></p>
+                            <p class="mt-2">At a leading engineering company, I spearheaded procurement and logistics for a diverse range of projects. My responsibilities included managing international and heavy-cargo shipments, ensuring seamless operations for complex projects. I also focused on optimizing internal processes, resulting in a 10% reduction in transportation costs by implementing a combined transport system. This role also involved hands-on warehouse management, where I redesigned the layout to increase storage capacity by 20% while improving material flow and efficiency.</p>
+                        </div>
+                        <!-- Experience Item -->
+                        <div class="animated-card timeline-item relative">
+                            <p class="text-cyan-400 font-semibold">2013 - 2021</p>
+                            <h3 class="text-xl font-bold text-white mt-1">Logistic & Purchasing Supervisor</h3>
+                            <p class="text-slate-300 font-medium">PT Epiterma Mas Indonesia & PT Voith Paper Rolls <span class="text-xs bg-cyan-900 text-cyan-300 py-1 px-2 rounded-full ml-2">Manufacturing</span></p>
+                            <p class="mt-2">Oversaw full-cycle procurement, vendor management, and complex logistics including heavy cargo and international shipments. Successfully managed a cost reduction initiative that reduced overall expenses by 15% through strategic negotiation and process improvements.</p>
+                        </div>
+                        <!-- Experience Item -->
+                        <div class="animated-card timeline-item relative">
+                            <p class="text-cyan-400 font-semibold">2007 - 2010</p>
+                            <h3 class="text-xl font-bold text-white mt-1">Warehouse Data Entry</h3>
+                            <p class="text-slate-300 font-medium">PT Elnusa Petrofin <span class="text-xs bg-cyan-900 text-cyan-300 py-1 px-2 rounded-full ml-2">Oil & Gas Services</span></p>
+                            <p class="mt-2">Managed inventory and data entry for seismic exploration projects, ensuring accurate stock control and coordinating with field crews.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Project Simulation Section (Updated with new animations) -->
+        <section id="simulation" class="py-24">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">Supply Chain & Digital Simulation</h2>
+                    <p class="text-lg mt-4 max-w-3xl mx-auto">Visual models of manufacturing, warehousing, global transportation, and machine learning processes.</p>
+                </div>
+                <div class="simulation-container">
+                    <!-- Realistic Manufacturing Animation (3D) -->
+                    <div class="animated-card glass-effect p-4 rounded-lg flex flex-col justify-between">
+                        <h3 class="text-xl font-semibold text-white mb-2 text-center">Manufacturing Process</h3>
+                        <div class="simulation-box">
+                            <canvas id="manufacturing-canvas" class="sim-canvas"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Warehousing Animation (3D) -->
+                    <div class="animated-card glass-effect p-4 rounded-lg flex flex-col justify-between">
+                        <h3 class="text-xl font-semibold text-white mb-2 text-center">Warehousing Activity</h3>
+                        <div class="simulation-box">
+                            <canvas id="warehousing-canvas" class="sim-canvas"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Transportation Animation (2D) -->
+                    <div class="animated-card glass-effect p-4 rounded-lg flex flex-col justify-between">
+                        <h3 class="text-xl font-semibold text-white mb-2 text-center">Global Logistics</h3>
+                        <div class="simulation-box">
+                            <span class="transport-icon truck-anim">🚚</span>
+                            <span class="transport-icon ship-anim">🚢</span>
+                            <span class="transport-icon plane-anim">✈️</span>
+                        </div>
+                    </div>
+
+                    <!-- Machine Learning Animation (2D) -->
+                    <div class="animated-card glass-effect p-4 rounded-lg flex flex-col justify-between">
+                        <h3 class="text-xl font-semibold text-white mb-2 text-center">Machine Learning Model</h3>
+                        <div class="simulation-box">
+                            <canvas id="ml-canvas" class="sim-canvas"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Education Section -->
+        <section id="education" class="py-24 bg-slate-900">
+             <div class="container mx-auto px-6">
+                 <div class="text-center mb-16">
+                     <h2 class="text-3xl md:text-4xl font-bold text-white">Education</h2>
+                     <p class="text-lg mt-4">My academic foundation in business, logistics, and technology.</p>
+                 </div>
+                 <div class="max-w-4xl mx-auto grid md:grid-cols-3 gap-8">
+                     <div class="animated-card glass-effect p-6 rounded-lg text-center">
+                         <h3 class="text-lg font-bold text-white">Master of Logistics Management</h3>
+                         <p class="text-cyan-400">Universitas Logistik & Bisnis Internasional</p>
+                         <p class="text-sm mt-1">(In Progress)</p>
+                     </div>
+                     <div class="animated-card glass-effect p-6 rounded-lg text-center">
+                         <h3 class="text-lg font-bold text-white">Bachelor of Management</h3>
+                         <p class="text-cyan-400">Universitas Pertiwi</p>
+                         <p class="text-sm mt-1">2021</p>
+                     </div>
+                     <div class="animated-card glass-effect p-6 rounded-lg text-center">
+                         <h3 class="text-lg font-bold text-white">Diploma in Computer Engineering</h3>
+                         <p class="text-cyan-400">Universitas Komputer Indonesia</p>
+                         <p class="text-sm mt-1">2005</p>
+                     </div>
+                 </div>
+             </div>
+         </section>
+
+         <!-- Certifications Section -->
+         <section id="certs" class="py-24">
+              <div class="container mx-auto px-6">
+                  <div class="text-center mb-16">
+                      <h2 class="text-3xl md:text-4xl font-bold text-white">Certifications & Training</h2>
+                      <p class="text-lg mt-4">Committed to continuous learning and professional development.</p>
+                  </div>
+                  <div class="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 text-center">
+                      <div class="animated-card glass-effect p-4 rounded-lg flex flex-col items-center justify-center">
+                          <p class="font-semibold text-white">IATA Dangerous Goods<br>Category 6</p>
+                          <p class="text-cyan-400 text-sm mt-1">International Air Transport Association</p>
+                      </div>
+                      <div class="animated-card glass-effect p-4 rounded-lg flex flex-col items-center justify-center">
+                          <p class="font-semibold text-white">Advanced Supply Chain Management</p>
+                          <p class="text-cyan-400 text-sm mt-1">APICS</p>
+                      </div>
+                      <div class="animated-card glass-effect p-4 rounded-lg flex flex-col items-center justify-center">
+                          <p class="font-semibold text-white">Warehouse Management Professional</p>
+                          <p class="text-cyan-400 text-sm mt-1">Certified Supply Chain Professional (CSCP)</p>
+                      </div>
+                      <div class="animated-card glass-effect p-4 rounded-lg flex flex-col items-center justify-center">
+                          <p class="font-semibold text-white">Project Management<br>Professional (PMP)</p>
+                          <p class="text-cyan-400 text-sm mt-1">Project Management Institute</p>
+                      </div>
+                      <div class="animated-card glass-effect p-4 rounded-lg flex flex-col items-center justify-center">
+                          <p class="font-semibold text-white">Strategic Sourcing & Negotiation</p>
+                          <p class="text-cyan-400 text-sm mt-1">Purchasing and Supply Management Center</p>
+                      </div>
+                      <div class="animated-card glass-effect p-4 rounded-lg flex flex-col items-center justify-center">
+                          <p class="font-semibold text-white">Lean Six Sigma Green Belt</p>
+                          <p class="text-cyan-400 text-sm mt-1">ASQ</p>
+                      </div>
+                  </div>
+              </div>
+          </section>
+
+          <!-- Publications Section -->
+          <section id="publications" class="py-24 bg-slate-900">
+               <div class="container mx-auto px-6">
+                   <div class="text-center mb-16">
+                       <h2 class="text-3xl md:text-4xl font-bold text-white">Publications & Papers</h2>
+                       <p class="text-lg mt-4">My contributions to the field of logistics and supply chain innovation.</p>
+                   </div>
+                   <div class="max-w-3xl mx-auto space-y-8">
+                       <div class="animated-card glass-effect p-6 rounded-lg">
+                           <h3 class="text-xl font-bold text-cyan-400 mb-2">The Role of Digital Twins in Modern Warehouse Management</h3>
+                           <p class="text-slate-300 text-sm">Journal of Supply Chain Research, Vol. 12, No. 3, 2023</p>
+                           <p class="mt-2">This paper explores how digital twin technology can be leveraged to optimize warehouse layouts, predict maintenance needs, and simulate operational changes before implementation, leading to significant efficiency gains.</p>
+                       </div>
+                       <div class="animated-card glass-effect p-6 rounded-lg">
+                           <h3 class="text-xl font-bold text-cyan-400 mb-2">Sustainable Supply Chains: A Case Study on Green Logistics in Southeast Asia</h3>
+                           <p class="text-slate-300 text-sm">International Journal of Logistics and Sustainability, Vol. 5, No. 1, 2022</p>
+                           <p class="mt-2">Examines the practical application of sustainable practices, including route optimization and eco-friendly packaging, in a fast-growing market, highlighting the balance between environmental responsibility and business profitability.</p>
+                       </div>
+                   </div>
+               </div>
+           </section>
+
+           <!-- Org Structure Section -->
+           <section id="org-structure" class="py-24">
+               <div class="container mx-auto px-6">
+                   <div class="text-center mb-16">
+                       <h2 class="text-3xl md:text-4xl font-bold text-white">Organizational Structure</h2>
+                       <p class="text-lg mt-4">A visual representation of my team leadership and reporting structure.</p>
+                   </div>
+                   <div class="max-w-4xl mx-auto overflow-x-auto text-center">
+                       <div class="org-chart-group animated-card">
+                           <div class="org-chart-node">Dodi Hariyanto<br><span class="text-sm font-normal text-slate-400">Operations & Supply Chain Manager</span></div>
+                           <div class="org-chart-line"></div>
+                           <div class="flex justify-between items-center w-full">
+                               <div class="org-chart-line-horizontal"></div>
+                           </div>
+                           <div class="flex justify-between w-full mt-4">
+                               <div class="org-chart-group w-1/2 md:w-1/3">
+                                   <div class="org-chart-node">Procurement Team</div>
+                                   <div class="org-chart-line"></div>
+                                   <div class="org-chart-node">Purchasing Staff</div>
+                               </div>
+                               <div class="org-chart-group w-1/2 md:w-1/3">
+                                   <div class="org-chart-node">Logistics Team</div>
+                                   <div class="org-chart-line"></div>
+                                   <div class="org-chart-node">Logistic Staff</div>
+                               </div>
+                               <div class="org-chart-group hidden md:flex w-1/3">
+                                   <div class="org-chart-node">Warehouse Team</div>
+                                   <div class="org-chart-line"></div>
+                                   <div class="org-chart-node">Warehouse Staff</div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </section>
+
+        <!-- Ask Dodi Section -->
+        <section id="ask-dodi" class="py-24 bg-slate-900">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">Ask Dodi</h2>
+                    <p class="text-lg mt-4 max-w-3xl mx-auto">Have a question about supply chain, logistics, or operations? Ask me anything.</p>
+                </div>
+                <div class="max-w-2xl mx-auto glass-effect p-6 rounded-lg">
+                    <div id="chat-container" class="space-y-4 mb-4 h-96 overflow-y-auto">
+                        <!-- Chat messages will be appended here -->
+                        <div class="flex justify-start">
+                            <div class="bg-slate-700 text-white rounded-lg p-3 max-w-xs md:max-w-md">Hello, I'm a supply chain and logistics expert. I can answer questions about procurement, warehouse management, freight forwarding, and more. What would you like to know?</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <input type="text" id="user-input" class="flex-1 p-3 rounded-lg bg-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500" placeholder="Type your question here...">
+                        <button id="send-button" class="bg-cyan-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-cyan-600 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 py-8 text-center text-slate-500">
+        <div class="container mx-auto px-6">
+            <p>&copy; 2025 Dodi Hariyanto. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const animatedElements = document.querySelectorAll('.animated-card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            animatedElements.forEach(el => observer.observe(el));
+        });
+
+        // --- Three.js Hero Canvas Animation ---
+        function createHeroAnimation() {
+            const canvas = document.getElementById('hero-canvas');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.position.z = 5;
+
+            // Lights
+            const ambientLight = new THREE.AmbientLight(0x404040, 2);
+            scene.add(ambientLight);
+            const pointLight = new THREE.PointLight(0xffffff, 2);
+            pointLight.position.set(5, 5, 5);
+            scene.add(pointLight);
+
+            // Create a path for the cubes to follow
+            const path = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(-10, 0, -5),
+                new THREE.Vector3(-5, 5, -2),
+                new THREE.Vector3(0, 0, 0),
+                new THREE.Vector3(5, -5, 2),
+                new THREE.Vector3(10, 0, 5)
+            ]);
+
+            const packageGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+            const packageMaterial = new THREE.MeshStandardMaterial({ color: 0x06b6d4, metalness: 0.8, roughness: 0.2 });
+
+            const packages = [];
+            for (let i = 0; i < 50; i++) {
+                const package = new THREE.Mesh(packageGeometry, packageMaterial);
+                const t = Math.random();
+                const point = path.getPointAt(t);
+                package.position.copy(point);
+                package.userData.speed = Math.random() * 0.005 + 0.001;
+                package.userData.t = t;
+                packages.push(package);
+                scene.add(package);
+            }
+
+            function animate() {
+                requestAnimationFrame(animate);
+
+                packages.forEach(pkg => {
+                    pkg.userData.t += pkg.userData.speed;
+                    if (pkg.userData.t > 1) {
+                        pkg.userData.t = 0;
+                    }
+                    const point = path.getPointAt(pkg.userData.t);
+                    pkg.position.copy(point);
+                });
+                
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+        
+        // --- Chart.js Charts ---
+        function createCharts() {
+            // Global Sourcing Chart
+            const globalSourcingCtx = document.getElementById('globalSourcingChart').getContext('2d');
+            new Chart(globalSourcingCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Local Sourcing', 'International Import'],
+                    datasets: [{
+                        data: [70, 30],
+                        backgroundColor: ['#06b6d4', '#475569'],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#94a3b8'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Cost Reduction Chart
+            const costReductionCtx = document.getElementById('costReductionChart').getContext('2d');
+            new Chart(costReductionCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Before Project', 'After Project'],
+                    datasets: [{
+                        label: 'Total Logistics Cost (Mio USD)',
+                        data: [2.5, 2.1],
+                        backgroundColor: ['#475569', '#06b6d4'],
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#1e293b' },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Supplier Count Chart
+            const supplierCountCtx = document.getElementById('supplierCountChart').getContext('2d');
+            new Chart(supplierCountCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Month 1', 'Month 2', 'Month 3', 'Month 4', 'Month 5', 'Month 6'],
+                    datasets: [{
+                        label: 'New Suppliers Onboarded',
+                        data: [2, 4, 7, 10, 12, 15],
+                        borderColor: '#06b6d4',
+                        backgroundColor: 'rgba(6, 182, 212, 0.2)',
+                        tension: 0.4,
+                        pointBackgroundColor: '#06b6d4'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#1e293b' },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        x: {
+                            grid: { color: '#1e293b' },
+                            ticks: { color: '#94a3b8' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Shipping Cost Chart
+            const shippingCostCtx = document.getElementById('shippingCostChart').getContext('2d');
+            new Chart(shippingCostCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Cost of Combined Transport', 'Cost of Traditional Transport'],
+                    datasets: [{
+                        data: [35, 65],
+                        backgroundColor: ['#06b6d4', '#475569'],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#94a3b8'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- 3D Manufacturing Animation (using Three.js) ---
+        function createManufacturingAnimation() {
+            const canvas = document.getElementById('manufacturing-canvas');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+
+            const ambientLight = new THREE.AmbientLight(0x404040, 2);
+            scene.add(ambientLight);
+            const pointLight = new THREE.PointLight(0xffffff, 1);
+            pointLight.position.set(5, 5, 5);
+            scene.add(pointLight);
+
+            // Conveyor belt
+            const beltGeometry = new THREE.BoxGeometry(10, 0.2, 1);
+            const beltMaterial = new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.5 });
+            const belt = new THREE.Mesh(beltGeometry, beltMaterial);
+            belt.position.y = -1;
+            scene.add(belt);
+
+            // Manufacturing items
+            const itemGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+            const itemMaterial = new THREE.MeshStandardMaterial({ color: 0x06b6d4, metalness: 0.8 });
+            const items = [];
+            for (let i = 0; i < 5; i++) {
+                const item = new THREE.Mesh(itemGeometry, itemMaterial);
+                item.position.set(-5 + i * 2.5, -0.8, 0);
+                items.push(item);
+                scene.add(item);
+            }
+
+            camera.position.z = 5;
+            camera.position.y = 1;
+            camera.lookAt(0, 0, 0);
+
+            function animate() {
+                requestAnimationFrame(animate);
+                items.forEach(item => {
+                    item.position.x += 0.02;
+                    if (item.position.x > 5) {
+                        item.position.x = -5;
+                    }
+                });
+                renderer.render(scene, camera);
+            }
+
+            let animationFrameId;
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        if (!animationFrameId) {
+                            animate();
+                        }
+                    } else {
+                        cancelAnimationFrame(animationFrameId);
+                        animationFrameId = null;
+                    }
+                });
+            }, { threshold: 0.5 });
+            observer.observe(canvas);
+
+            window.addEventListener('resize', () => {
+                 if (canvas.clientHeight > 0) {
+                     camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                     camera.updateProjectionMatrix();
+                     renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+                 }
+             });
+        }
+
+        // --- 3D Warehousing Animation (using Three.js) ---
+        function createWarehousingAnimation() {
+            const canvas = document.getElementById('warehousing-canvas');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+
+            const ambientLight = new THREE.AmbientLight(0x404040, 2);
+            scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+
+            // Shelving units
+            const shelfMaterial = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.5 });
+            for (let i = 0; i < 3; i++) {
+                const shelf = new THREE.Mesh(new THREE.BoxGeometry(1, 4, 1), shelfMaterial);
+                shelf.position.set(i * 3 - 3, 0, 0);
+                scene.add(shelf);
+            }
+
+            // Boxes
+            const boxGeometry = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+            const boxMaterial = new THREE.MeshStandardMaterial({ color: 0x94a3b8 });
+            const boxes = [];
+            for (let i = 0; i < 3; i++) {
+                const box = new THREE.Mesh(boxGeometry, boxMaterial);
+                box.position.set(-3 + i * 3, 1.5, 0.5);
+                boxes.push(box);
+                scene.add(box);
+            }
+            const boxToMove = boxes[1];
+
+            // Forklift
+            const forklift = new THREE.Group();
+            const body = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 1.5), new THREE.MeshStandardMaterial({ color: 0x06b6d4 }));
+            body.position.z = -1;
+            const mast = new THREE.Mesh(new THREE.BoxGeometry(0.1, 1, 0.1), new THREE.MeshStandardMaterial({ color: 0x475569 }));
+            mast.position.y = 0.25;
+            mast.position.z = -0.2;
+            const fork = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.05, 0.5), new THREE.MeshStandardMaterial({ color: 0x94a3b8 }));
+            fork.position.y = -0.2;
+            fork.position.z = -0.5;
+            forklift.add(body, mast, fork);
+            forklift.position.set(0, -1.25, 3);
+            scene.add(forklift);
+
+            camera.position.set(0, 3, 6);
+            camera.lookAt(0, 0, 0);
+
+            let time = 0;
+            let animationState = 'pickup';
+
+            function animate() {
+                requestAnimationFrame(animate);
+
+                time += 0.01;
+                if (animationState === 'pickup') {
+                    forklift.position.z -= 0.05;
+                    if (forklift.position.z < 0) {
+                        animationState = 'move';
+                    }
+                } else if (animationState === 'move') {
+                    forklift.position.x = 2 * Math.sin(time);
+                    boxToMove.position.copy(forklift.position);
+                    boxToMove.position.y = -0.6;
+                    boxToMove.position.z = forklift.position.z - 1;
+                }
+                renderer.render(scene, camera);
+            }
+            
+            let animationFrameId;
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        if (!animationFrameId) {
+                            animate();
+                        }
+                    } else {
+                        cancelAnimationFrame(animationFrameId);
+                        animationFrameId = null;
+                    }
+                });
+            }, { threshold: 0.5 });
+            observer.observe(canvas);
+
+            window.addEventListener('resize', () => {
+                 if (canvas.clientHeight > 0) {
+                     camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                     camera.updateProjectionMatrix();
+                     renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+                 }
+             });
+        }
+        
+        // --- 2D ML Animation (using Canvas) ---
+        function createMLAnimation() {
+            const canvas = document.getElementById('ml-canvas');
+            const ctx = canvas.getContext('2d');
+            let animationFrameId;
+
+            const dataPoints = [];
+            let decisionLineX = 0;
+            const colors = {
+                'A': '#f87171', // Red
+                'B': '#60a5fa'  // Blue
+            };
+
+            function resizeCanvas() {
+                const container = canvas.parentElement;
+                canvas.width = container.clientWidth - 32; // Account for padding
+                canvas.height = container.clientHeight - 32;
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                dataPoints.forEach(point => {
+                    ctx.beginPath();
+                    ctx.arc(point.x, point.y, 5, 0, Math.PI * 2);
+                    ctx.fillStyle = colors[point.category];
+                    ctx.fill();
+                });
+
+                // Draw decision line
+                ctx.beginPath();
+                ctx.moveTo(decisionLineX, 0);
+                ctx.lineTo(decisionLineX, canvas.height);
+                ctx.strokeStyle = '#06b6d4';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([5, 5]);
+                ctx.stroke();
+                ctx.closePath();
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#cbd5e1';
+                ctx.font = '12px Inter';
+                ctx.fillText("Class A", 10, 15);
+                ctx.fillText("Class B", canvas.width - 70, 15);
+            }
+
+            function animateML() {
+                if (dataPoints.length < 50) {
+                    const x = Math.random() * canvas.width;
+                    const y = Math.random() * canvas.height;
+                    const category = x < canvas.width / 2 ? 'A' : 'B';
+                    dataPoints.push({ x, y, category });
+                }
+                if (decisionLineX < canvas.width / 2) {
+                    decisionLineX += 0.5;
+                }
+                draw();
+                animationFrameId = requestAnimationFrame(animateML);
+            }
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        resizeCanvas();
+                        if (!animationFrameId) {
+                            animateML();
+                        }
+                    } else {
+                        cancelAnimationFrame(animationFrameId);
+                        animationFrameId = null;
+                    }
+                });
+            }, { threshold: 0.5 });
+            observer.observe(canvas);
+
+            window.addEventListener('resize', resizeCanvas);
+        }
+
+        // --- Ask Dodi Section Logic ---
+        async function fetchGeminiResponse(prompt) {
+            const systemPrompt = "You are Dodi Hariyanto, a senior logistics and supply chain professional with over 15 years of experience. Respond to questions in a knowledgeable, professional, and concise manner. Provide clear and actionable insights. Do not use 'I' statements unless necessary for context. For example, instead of 'I believe...', say 'It is crucial to...'. Do not invent information; if you don't know the answer, say so. Keep your responses brief, like a direct expert consultation.";
+            const userQuery = prompt;
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                tools: [{ "google_search": {} }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+            };
+
+            const headers = { 'Content-Type': 'application/json' };
+            let response;
+            let retryCount = 0;
+            const maxRetries = 3;
+            const baseDelay = 1000;
+
+            while (retryCount < maxRetries) {
+                try {
+                    response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.status === 429) {
+                        retryCount++;
+                        const delay = baseDelay * Math.pow(2, retryCount - 1);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue;
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(`API call failed with status: ${response.status}`);
+                    }
+                    break;
+                } catch (error) {
+                    throw new Error(`Network error or fetch failed: ${error.message}`);
+                }
+            }
+
+            if (!response || !response.ok) {
+                throw new Error("Failed to get a successful response from the API after multiple retries.");
+            }
+
+            const result = await response.json();
+            const candidate = result.candidates?.[0];
+
+            if (candidate && candidate.content?.parts?.[0]?.text) {
+                const text = candidate.content.parts[0].text;
+                let sources = [];
+                const groundingMetadata = candidate.groundingMetadata;
+                if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                    sources = groundingMetadata.groundingAttributions
+                        .map(attribution => ({
+                            uri: attribution.web?.uri,
+                            title: attribution.web?.title,
+                        }))
+                        .filter(source => source.uri && source.title);
+                }
+                return { text, sources };
+            } else {
+                return { text: "I'm sorry, I couldn't find an answer to that. Please try rephrasing your question.", sources: [] };
+            }
+        }
+
+        function appendMessage(text, isUser, sources = []) {
+            const chatContainer = document.getElementById('chat-container');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
+
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = `rounded-lg p-3 max-w-xs md:max-w-md ${isUser ? 'bg-cyan-600 text-white' : 'bg-slate-700 text-white'}`;
+            bubbleDiv.innerText = text;
+
+            if (sources.length > 0) {
+                const sourcesList = document.createElement('ul');
+                sourcesList.className = 'text-xs text-slate-400 mt-2 list-none p-0';
+                const sourceHeader = document.createElement('li');
+                sourceHeader.innerText = 'Sources:';
+                sourcesList.appendChild(sourceHeader);
+                sources.forEach(source => {
+                    const sourceItem = document.createElement('li');
+                    const sourceLink = document.createElement('a');
+                    sourceLink.href = source.uri;
+                    sourceLink.target = "_blank";
+                    sourceLink.rel = "noopener noreferrer";
+                    sourceLink.className = "hover:underline";
+                    sourceLink.innerText = source.title;
+                    sourceItem.appendChild(sourceLink);
+                    sourcesList.appendChild(sourceItem);
+                });
+                bubbleDiv.appendChild(sourcesList);
+            }
+
+            messageDiv.appendChild(bubbleDiv);
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        async function handleSendMessage() {
+            const inputElement = document.getElementById('user-input');
+            const sendButton = document.getElementById('send-button');
+            const userPrompt = inputElement.value.trim();
+
+            if (!userPrompt) return;
+
+            // Display user message
+            appendMessage(userPrompt, true);
+            inputElement.value = '';
+            sendButton.disabled = true;
+            sendButton.innerHTML = `<svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
+
+            try {
+                const { text, sources } = await fetchGeminiResponse(userPrompt);
+                appendMessage(text, false, sources);
+            } catch (error) {
+                appendMessage("There was an error processing your request. Please try again.", false);
+            } finally {
+                sendButton.disabled = false;
+                sendButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
+            }
+        }
+
+        document.getElementById('send-button').addEventListener('click', handleSendMessage);
+        document.getElementById('user-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleSendMessage();
+            }
+        });
+
+        // Initialize all animations and charts on window load
+        window.onload = function () {
+            createHeroAnimation();
+            createCharts();
+            createManufacturingAnimation();
+            createWarehousingAnimation();
+            createMLAnimation();
+        };
+    </script>
+</body>
+</html>
